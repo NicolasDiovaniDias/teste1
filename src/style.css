@@ -1,0 +1,149 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Cores e fontes da marca.
+ * Para combinar com a logo do cliente, mude os valores aqui:
+ * o site inteiro usa estes nomes (bg-floresta, text-broto etc.).
+ */
+@theme {
+  --font-sans: "Figtree Variable", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque Variable", "Figtree Variable", system-ui, sans-serif;
+
+  --color-floresta: #0f3b2a; /* verde principal: fundos escuros e botões */
+  --color-broto: #b8e34a; /* verde-limão de destaque */
+  --color-folha: #1f6b45; /* links e ícones sobre fundo claro */
+  --color-areia: #f4f6f1; /* fundo das páginas */
+  --color-tinta: #14231b; /* texto principal */
+  --color-musgo: #4a5b52; /* texto secundário */
+  --color-linha: #dce5dd; /* bordas */
+  --color-nevoa: #d2e2d7; /* texto claro sobre o verde escuro */
+
+  /* Cores do padrão nacional da coleta seletiva */
+  --color-papel: #1f5fad;
+  --color-plastico: #c8302a;
+  --color-vidro: #17663a;
+  --color-metal: #e0ae12;
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from { height: 0; }
+    to { height: var(--reka-accordion-content-height); }
+  }
+  @keyframes accordion-up {
+    from { height: var(--reka-accordion-content-height); }
+    to { height: 0; }
+  }
+}
+
+/* Variáveis usadas pelos componentes do shadcn-vue (src/components/ui) */
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+:root {
+  --radius: 0.875rem;
+  --background: #ffffff;
+  --foreground: #14231b;
+  --card: #ffffff;
+  --card-foreground: #14231b;
+  --popover: #ffffff;
+  --popover-foreground: #14231b;
+  --primary: #0f3b2a;
+  --primary-foreground: #ffffff;
+  --secondary: #eef3ee;
+  --secondary-foreground: #14231b;
+  --muted: #eef3ee;
+  --muted-foreground: #4a5b52;
+  --accent: #e3eee6;
+  --accent-foreground: #14231b;
+  --destructive: #b42318;
+  --destructive-foreground: #ffffff;
+  --border: #dce5dd;
+  --input: #cfdcd2;
+  --ring: #1f6b45;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-areia font-sans text-tinta antialiased;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-folha);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/*
+ * Mapa (Leaflet). O CSS do Leaflet carrega depois deste arquivo,
+ * por isso os seletores abaixo usam duas classes (para ganhar dele).
+ */
+.leaflet-container.mapa-bairros {
+  background: #e7eee8;
+  font-family: inherit;
+}
+.leaflet-tooltip.rotulo-bairro {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  color: var(--color-tinta);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.25;
+  text-align: center;
+  white-space: nowrap;
+  /* contorno que mantém o nome legível mesmo passando da borda do bairro */
+  text-shadow: 0 0 3px #ffffff, 0 0 3px #ffffff;
+}
+.leaflet-tooltip.rotulo-bairro--ativo {
+  color: #ffffff;
+  text-shadow: 0 0 3px #0f3b2a, 0 0 3px #0f3b2a;
+}
+.leaflet-tooltip.rotulo-bairro--sem-coleta {
+  color: #59645e;
+}
