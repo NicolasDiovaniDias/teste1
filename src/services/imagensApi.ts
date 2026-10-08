@@ -1,18 +1,18 @@
+import { api } from './http'
+
 /*
- * Imagens das notícias.
- *
- * DEMONSTRAÇÃO: a foto é reduzida no navegador e salva como texto (data URL)
- * junto com a notícia. Isso ocupa espaço no navegador, então serve só para testar.
- *
- * No site real, envie o arquivo para o backend e devolva o endereço (URL) da imagem:
- *   const dados = new FormData()
- *   dados.append('imagem', arquivo)
- *   const resposta = await fetch(`${import.meta.env.VITE_API_URL}/imagens`, { method: 'POST', body: dados })
- *   if (!resposta.ok) throw new Error('Não foi possível enviar a imagem.')
- *   return (await resposta.json()).url
+ * Imagens das notícias: a foto é reduzida aqui no navegador (até 1200 px de
+ * largura, em JPG) e enviada para a API, que guarda no banco e devolve o
+ * endereço da imagem, ex.: /api/imagens/<id>.
  */
 const LARGURA_MAXIMA = 1200
 const TAMANHO_MAXIMO = 15 * 1024 * 1024 // 15 MB
+
+function paraBlob(canvas: HTMLCanvasElement): Promise<Blob> {
+  return new Promise((resolver, rejeitar) => {
+    canvas.toBlob((blob) => (blob ? resolver(blob) : rejeitar(new Error('Não foi possível preparar a imagem.'))), 'image/jpeg', 0.82)
+  })
+}
 
 export async function enviarImagem(arquivo: File): Promise<string> {
   if (!arquivo.type.startsWith('image/')) {
@@ -41,5 +41,11 @@ export async function enviarImagem(arquivo: File): Promise<string> {
   contexto.fillRect(0, 0, canvas.width, canvas.height)
   contexto.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
   bitmap.close()
-  return canvas.toDataURL('image/jpeg', 0.8)
+
+  const { url } = await api<{ url: string }>('/imagens', {
+    method: 'POST',
+    corpo: await paraBlob(canvas),
+    headers: { 'Content-Type': 'image/jpeg' },
+  })
+  return url
 }

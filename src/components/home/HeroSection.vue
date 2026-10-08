@@ -10,7 +10,9 @@ const busca = ref('')
 
 function consultar() {
   const termo = busca.value.trim()
-  router.push({ name: 'consulta', query: termo ? { busca: termo } : {} })
+  // 8 números (com ou sem traço) = CEP; qualquer outra coisa vira busca por bairro
+  if (/^\d{5}-?\d{3}$/.test(termo)) router.push({ name: 'consulta', query: { cep: termo.replace(/\D/g, '') } })
+  else router.push({ name: 'consulta', query: termo ? { busca: termo } : {} })
 }
 </script>
 
@@ -33,7 +35,7 @@ function consultar() {
         </p>
 
         <form role="search" class="flex max-w-xl flex-col gap-2.5" @submit.prevent="consultar">
-          <label for="hero-bairro" class="text-[15px] font-bold">Qual é o seu bairro?</label>
+          <label for="hero-bairro" class="text-[15px] font-bold">Qual é o seu CEP ou bairro?</label>
           <div class="flex flex-wrap gap-2 rounded-2xl bg-white p-2 focus-within:ring-4 focus-within:ring-broto">
             <div class="flex min-h-13 flex-[1_1_240px] items-center gap-2.5 px-3 text-musgo">
               <Search class="size-5 shrink-0" aria-hidden="true" />
@@ -42,7 +44,7 @@ function consultar() {
                 v-model="busca"
                 type="text"
                 autocomplete="off"
-                placeholder="Digite o nome do bairro"
+                placeholder="CEP ou nome do bairro"
                 class="w-full min-w-0 bg-transparent py-3 text-[17px] text-tinta outline-none placeholder:text-musgo"
               />
             </div>

@@ -19,6 +19,8 @@ export interface Bairro {
   nome: string
   /** false = o bairro aparece no site como "sem coleta seletiva" */
   ativo: boolean
+  /** Outros nomes do mesmo lugar (ajudam a busca por CEP e por rua a encontrar o bairro) */
+  apelidos: string[]
   turnos: Turno[]
   /** Limites do bairro no mapa (GeoJSON). Sem isso, o bairro aparece só na busca. */
   area?: Polygon | MultiPolygon

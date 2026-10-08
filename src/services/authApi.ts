@@ -1,21 +1,23 @@
+import { api } from './http'
+
 /*
- * Login de DEMONSTRAÇÃO. Não use assim em produção!
- *
- * No site real, quem confere e-mail e senha é o backend. Ele devolve um token
- * (de preferência num cookie httpOnly) e valida esse token em toda requisição
- * do painel. Esconder a tela no front-end não protege nada sozinho.
+ * Login do painel. Quem confere e-mail e senha é a API: ela devolve um cookie
+ * de sessão (httpOnly, que o JavaScript da página nem consegue ler) e confere
+ * esse cookie em toda alteração feita pelo painel.
  */
 export interface Usuario {
   nome: string
   email: string
 }
 
-export const CREDENCIAIS_DEMO = { email: 'admin@exemplo.com', senha: 'coleta123' }
+export function sessaoAtual(): Promise<{ usuario: Usuario | null }> {
+  return api('/auth/sessao')
+}
 
-export async function entrar(email: string, senha: string): Promise<Usuario> {
-  await new Promise((resolver) => setTimeout(resolver, 400))
-  if (email.trim().toLowerCase() === CREDENCIAIS_DEMO.email && senha === CREDENCIAIS_DEMO.senha) {
-    return { nome: 'Administrador', email: CREDENCIAIS_DEMO.email }
-  }
-  throw new Error('E-mail ou senha incorretos. Confira e tente de novo.')
+export function entrar(email: string, senha: string): Promise<{ usuario: Usuario }> {
+  return api('/auth/entrar', { method: 'POST', json: { email, senha } })
+}
+
+export function sair(): Promise<void> {
+  return api('/auth/sair', { method: 'POST' })
 }

@@ -75,16 +75,20 @@ const router = createRouter({
       ],
     },
   ],
-  scrollBehavior(para, _de, posicaoSalva) {
+  scrollBehavior(para, de, posicaoSalva) {
     if (posicaoSalva) return posicaoSalva
     if (para.hash) return { el: para.hash, top: 16 }
+    // Só mudou a busca na mesma página (?bairro=...): não pula para o topo
+    if (para.path === de.path) return false
     return { top: 0 }
   },
 })
 
 // Protege o painel: sem login, manda para a tela de entrar
-router.beforeEach((para) => {
+router.beforeEach(async (para) => {
   const auth = useAuthStore()
+  // Na primeira navegação, pergunta ao servidor se já existe uma sessão aberta
+  await auth.verificar()
   if (para.meta.requerLogin && !auth.logado) {
     return { name: 'login', query: { voltar: para.fullPath } }
   }

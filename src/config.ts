@@ -27,7 +27,8 @@ export const numeros = [
 export const mapa = {
   /**
    * true = mostra as ruas do OpenStreetMap por baixo dos bairros.
-   * Deixe false enquanto os bairros forem os de exemplo (as áreas são fictícias).
+   * O mapa só aparece na consulta quando algum bairro tiver a área (GeoJSON)
+   * cadastrada no banco. Ao cadastrar os limites reais, mude para true.
    */
   mostrarRuas: false,
 }

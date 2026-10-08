@@ -11,12 +11,6 @@ export function hojeISO(): string {
   return paraISO(new Date())
 }
 
-/** Soma dias a hoje: diasAPartirDeHoje(-2) = anteontem */
-export function diasAPartirDeHoje(dias: number): string {
-  const hoje = new Date()
-  return paraISO(new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + dias))
-}
-
 /**
  * Converte "2026-10-08" em data local.
  * (new Date('2026-10-08') usaria o fuso UTC e, no Brasil, viraria o dia 7.)

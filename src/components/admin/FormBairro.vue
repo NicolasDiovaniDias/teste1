@@ -3,6 +3,7 @@ import { Info, LoaderCircle, Plus, Trash2 } from '@lucide/vue'
 import { computed, reactive, ref, watch } from 'vue'
 import { toast } from 'vue-sonner'
 import { Button } from '@/components/ui/button'
+import { mensagemDeErro } from '@/services/http'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -30,6 +31,7 @@ interface TurnoForm {
 
 let proximaChave = 0
 const nome = ref('')
+const apelidos = ref('')
 const ativo = ref(true)
 const turnos = ref<TurnoForm[]>([])
 const salvando = ref(false)
@@ -47,6 +49,7 @@ function paraForm(turno: Turno): TurnoForm {
 watch(aberto, (estaAberto) => {
   if (!estaAberto) return
   nome.value = props.bairro?.nome ?? ''
+  apelidos.value = (props.bairro?.apelidos ?? []).join(', ')
   ativo.value = props.bairro?.ativo ?? true
   turnos.value = props.bairro ? props.bairro.turnos.map(paraForm) : [paraForm({ dia: 1, periodo: 'manha' })]
   erros.nome = ''
@@ -104,6 +107,7 @@ async function salvar() {
     await store.salvar({
       id: props.bairro?.id ?? gerarId(nomeLimpo),
       nome: nomeLimpo,
+      apelidos: [...new Set(apelidos.value.split(',').map((a) => a.trim()).filter(Boolean))],
       ativo: ativo.value,
       // Os turnos ficam guardados mesmo se a coleta for desativada
       turnos: turnos.value.map(({ dia, periodo, inicio, fim }) => ({
@@ -117,8 +121,8 @@ async function salvar() {
     })
     toast.success(`Bairro “${nomeLimpo}” salvo.`)
     aberto.value = false
-  } catch {
-    toast.error('Não foi possível salvar o bairro. Tente de novo.')
+  } catch (e) {
+    toast.error(mensagemDeErro(e, 'Não foi possível salvar o bairro. Tente de novo.'))
   } finally {
     salvando.value = false
   }
@@ -147,6 +151,23 @@ async function salvar() {
               class="h-12 rounded-xl border-2 px-3.5 text-base md:text-base"
             />
             <p v-if="erros.nome" id="erro-nome" class="text-sm font-semibold text-[#a12a23]">{{ erros.nome }}</p>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <Label for="apelidos-bairro" class="text-[15px] font-bold">
+              Outros nomes <span class="font-normal text-musgo">(opcional)</span>
+            </Label>
+            <Input
+              id="apelidos-bairro"
+              v-model="apelidos"
+              autocomplete="off"
+              placeholder="Ex.: Santa Izabel, Jardim Krahe"
+              aria-describedby="dica-apelidos"
+              class="h-12 rounded-xl border-2 px-3.5 text-base md:text-base"
+            />
+            <p id="dica-apelidos" class="text-sm leading-relaxed text-musgo">
+              Separe por vírgula. Use o nome que aparece no CEP dos Correios: assim a busca por CEP e por rua encontra este bairro.
+            </p>
           </div>
 
           <div class="flex items-center justify-between gap-4 rounded-2xl bg-areia px-4 py-3.5">

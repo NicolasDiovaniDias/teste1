@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LoaderCircle, Plus, RotateCcw, Search } from '@lucide/vue'
+import { LoaderCircle, Plus, Search } from '@lucide/vue'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
@@ -15,6 +15,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { mensagemDeErro } from '@/services/http'
 import { situacao } from '@/lib/noticias'
 import { normalizar } from '@/lib/texto'
 import { useNoticiasStore } from '@/stores/noticias'
@@ -92,19 +93,11 @@ async function confirmarExclusao() {
     await store.excluir(id)
     toast.success(`Notícia “${titulo}” excluída.`)
     paraExcluir.value = null
-  } catch {
-    toast.error('Não foi possível excluir a notícia. Tente de novo.')
+  } catch (e) {
+    toast.error(mensagemDeErro(e, 'Não foi possível excluir a notícia. Tente de novo.'))
   } finally {
     excluindo.value = false
   }
-}
-
-// ---- Outros ----
-const modoDemo = import.meta.env.DEV
-
-async function restaurarExemplo() {
-  await store.restaurarExemplo()
-  toast.success('Notícias de exemplo restauradas.')
 }
 </script>
 
@@ -116,10 +109,6 @@ async function restaurarExemplo() {
         <p class="text-musgo">As notícias publicadas aparecem na página inicial e na página de notícias do site.</p>
       </div>
       <div class="flex flex-wrap gap-2">
-        <Button v-if="modoDemo" variant="ghost" class="h-12 rounded-xl px-4 font-semibold text-musgo" @click="restaurarExemplo">
-          <RotateCcw aria-hidden="true" />
-          Restaurar exemplo
-        </Button>
         <Button class="h-12 rounded-xl bg-broto px-5 text-base font-extrabold text-floresta hover:bg-[#c6ec66]" @click="novaNoticia">
           <Plus aria-hidden="true" />
           Nova notícia

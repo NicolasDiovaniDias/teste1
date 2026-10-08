@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { normalizar } from '@/lib/texto'
 import * as api from '@/services/bairrosApi'
+import { mensagemDeErro } from '@/services/http'
 import type { Bairro } from '@/types/coleta'
 
 /**
@@ -25,17 +26,17 @@ export const useBairrosStore = defineStore('bairros', () => {
       bairros.value = await api.listarBairros()
       carregou.value = true
     } catch (e) {
-      erro.value = e instanceof Error ? e.message : 'Não foi possível carregar os bairros.'
+      erro.value = mensagemDeErro(e, 'Não foi possível carregar os bairros.')
     } finally {
       carregando.value = false
     }
   }
 
-  /** Busca ignorando acentos e maiúsculas: "sao jose" encontra "São José". */
+  /** Busca pelo nome e pelos outros nomes, ignorando acentos: "sao jose" encontra "São José". */
   function buscar(texto: string): Bairro[] {
     const termo = normalizar(texto)
     if (!termo) return ordenados.value
-    return ordenados.value.filter((b) => normalizar(b.nome).includes(termo))
+    return ordenados.value.filter((b) => [b.nome, ...(b.apelidos ?? [])].some((nome) => normalizar(nome).includes(termo)))
   }
 
   function porId(id: string): Bairro | undefined {
@@ -55,9 +56,5 @@ export const useBairrosStore = defineStore('bairros', () => {
     bairros.value = bairros.value.filter((b) => b.id !== id)
   }
 
-  async function restaurarExemplo(): Promise<void> {
-    bairros.value = await api.restaurarExemplo()
-  }
-
-  return { bairros, carregando, erro, ordenados, totalAtivos, carregar, buscar, porId, salvar, excluir, restaurarExemplo }
+  return { bairros, carregando, carregou, erro, ordenados, totalAtivos, carregar, buscar, porId, salvar, excluir }
 })

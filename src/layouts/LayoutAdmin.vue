@@ -12,8 +12,8 @@ const abas = [
   { rotulo: 'Notícias', to: { name: 'admin-noticias' }, icone: Newspaper },
 ]
 
-function sair() {
-  auth.sair()
+async function sair() {
+  await auth.sair()
   router.push({ name: 'login' })
 }
 </script>
@@ -23,7 +23,10 @@ function sair() {
     <header class="bg-floresta text-white">
       <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 pt-3 pb-2">
         <div class="flex items-center gap-3.5">
-          <LogoMarca :tamanho="40" />
+          <RouterLink :to="{ name: 'inicio' }" class="flex min-h-11 items-center rounded-lg">
+            <LogoMarca :tamanho="40" />
+            <span class="sr-only">: página inicial do site</span>
+          </RouterLink>
           <span class="rounded-full bg-white/15 px-2.5 py-1 text-[13px] font-bold text-[#e3eee6]">Painel</span>
         </div>
         <nav aria-label="Conta" class="flex flex-wrap items-center gap-1.5">

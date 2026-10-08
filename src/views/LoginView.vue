@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { empresa } from '@/config'
-import { CREDENCIAIS_DEMO } from '@/services/authApi'
 import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore()
@@ -19,9 +18,6 @@ const senha = ref('')
 const senhaVisivel = ref(false)
 const enviando = ref(false)
 const erro = ref<string | null>(null)
-
-// A dica com o login de teste só aparece rodando no seu computador (npm run dev)
-const mostrarDemo = import.meta.env.DEV
 
 const vantagens = [
   'Cadastre bairros e defina os dias e turnos da coleta',
@@ -61,13 +57,15 @@ async function entrar() {
       </RouterLink>
 
       <div class="my-auto flex max-w-lg flex-col gap-8">
-        <img
-          :src="logoVertical"
-          :alt="`${empresa.nome}: ${empresa.nomeCompleto}`"
-          width="640"
-          height="797"
-          class="h-auto w-32 sm:w-48 lg:w-56"
-        />
+        <RouterLink :to="{ name: 'inicio' }" class="self-start rounded-xl">
+          <img
+            :src="logoVertical"
+            :alt="`${empresa.nome}: página inicial`"
+            width="640"
+            height="797"
+            class="h-auto w-32 sm:w-48 lg:w-56"
+          />
+        </RouterLink>
         <div class="flex flex-col gap-5">
           <p class="text-sm font-bold text-broto">Área restrita</p>
           <h1 class="font-display text-[clamp(2rem,3.4vw,3.2rem)] leading-[1.05] font-extrabold tracking-tight">
@@ -95,13 +93,6 @@ async function entrar() {
           <h2 class="font-display text-[34px] font-extrabold tracking-tight">Entrar</h2>
           <p class="text-musgo">Acesso exclusivo da equipe da {{ empresa.nome }}.</p>
         </div>
-
-        <p
-          v-if="mostrarDemo"
-          class="rounded-xl border border-dashed border-[#a9c4b3] bg-[#f1f7ec] px-4 py-3 text-sm leading-relaxed text-[#24382c]"
-        >
-          <strong>Teste:</strong> {{ CREDENCIAIS_DEMO.email }} / {{ CREDENCIAIS_DEMO.senha }}
-        </p>
 
         <div class="flex flex-col gap-2">
           <Label for="email" class="text-[15px] font-bold">E-mail</Label>

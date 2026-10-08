@@ -29,8 +29,8 @@ const semana = computed(() =>
     class="flex flex-col items-start gap-2.5 rounded-3xl border-2 border-dashed border-[#cfdcd2] p-8 text-musgo"
   >
     <MapPin class="size-7" aria-hidden="true" />
-    <p class="text-lg font-bold text-tinta">Escolha um bairro para ver a coleta</p>
-    <p>Digite o nome acima ou toque em um bairro da lista ou do mapa.</p>
+    <p class="text-lg font-bold text-tinta">Escolha um local para ver a coleta</p>
+    <p>Busque pelo CEP, pela rua ou pelo bairro e toque no seu local na lista.</p>
   </div>
 
   <!-- Bairro sem coleta seletiva -->
